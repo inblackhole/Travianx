@@ -27,7 +27,7 @@ Activation code: ".$act."
 ----------------------------
 
 Click the following link in order to activate your account:
-".SERVER."activate.php?code=".$act."
+http://${_SERVER['HTTP_HOST']}/activate.php?code=$act
 
 Greetings,
 TravianX";
