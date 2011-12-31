@@ -6,7 +6,6 @@
 //                              - TravianX = Travian Clone Project -                                //
 //                                 DO NOT REMOVE COPYRIGHT NOTICE!                                  //
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-	rename("include/constant.php","../GameEngine/config.php");
 ?>
 
 

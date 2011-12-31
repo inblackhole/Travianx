@@ -1,4 +1,4 @@
-<?
+<?php
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                             TRAVIANX                                             //
 //            Only for advanced users, do not edit if you dont know what are you doing!             //
@@ -6,6 +6,7 @@
 //                              - TravianX = Travian Clone Project -                                //
 //                                 DO NOT REMOVE COPYRIGHT NOTICE!                                  //
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+	rename("include/constant.php","../GameEngine/config.php");
 ?>
 <form action="include/oasis.php" method="post" id="dataform">
 <p>
