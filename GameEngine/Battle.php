@@ -371,6 +371,13 @@ class Battle {
 			$moralbonus = 1.0;
 		}
 
+		// involve = 1000 -> $Mfactor = 1.5001
+		// involve = 2000 -> $Mfactor = 1.4769
+		// involve = 3000 -> $Mfactor = 1.4632
+		// involve = 4000 -> $Mfactor = 1.4534
+		// involve = 10000 -> $Mfactor = 1.4221
+		// involve = 100000 -> $Mfactor = 1.3414
+		// bigger $involve cause bigger casualties, ** DON'T KNOW WHY
 		if($involve >= 1000) {
 			$Mfactor = round(2*(1.8592-pow($involve,0.015)),4);
 		}
@@ -405,7 +412,7 @@ class Battle {
 		else if($type == 3) // normal attack
         {
 			// Attacker
-			$result[1] = ($winner)? pow((($rdp*$moralbonus)/$rap),$Mfactor) : 1;
+			$result[1] = ($winner)? pow((($rdp*$moralbonus)/$rap),$Mfactor) : 1; // maybe > 1 ?
 			$result[1] = round($result[1],8);
             
 			// Defender
