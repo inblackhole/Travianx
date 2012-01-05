@@ -159,38 +159,44 @@ class Battle {
 	}
 
 	
-	//1 raid 0 normal
+	// Used by both Simulator and Automation
+	// $Attacker: Array[u1..u50]
+	// $Defender: Array[u1..u50]
+	// $type: 0 (scout), 3 (attack), 4 (raid)
+	// $att_ab, $def_ab: Array[8] unit level
+	// PROBLEM: only one defender's unit level is considered
+	// PROBLEM: $Defender could not structure multiple reinforcements and heroes well
 	function calculateBattle($Attacker,$Defender,$def_wall,$att_tribe,$def_tribe,$residence,$attpop,$defpop,$type,$def_ab,$att_ab,$tblevel,$stonemason,$walllevel) {
-		global $bid34;
-		// Definieer de array met de eenheden
+		global $bid34;  // stonemason's basic value, Array[20], use `attri`, defined in GameEngine/Data/buidata.php  
+		// Define the array with the units
 		$calvary = array(4,5,6,15,16,23,24,25,26,35,36,45,46);
 		$catapult = array(8,18,28,38,48);
 		$rams = array(7,17,27,37,47);		
 		$catp = $ram = 0;
-		// Array om terug te keren met het resultaat van de berekening
+		// Array to return the result of the calculation
 		$result = array();
 		$involve = 0;
 		$winner = false;
-		// bij 0 alle deelresultaten
+		// 0 for all partial results
 		$cap = $ap = $dp = $cdp = $rap = $rdp = 0;
         
         //exit($type);
 
-        if ($Attacker['uhero'] != 0)
+        if ($Attacker['uhero'] != 0)// automation only
         { 
             //exit($Attacker['id']);
           $atkhero= $this->getBattleHero($Attacker['id']);
         }
         //$defhero= $this->getBattleHero($Defender['id']);
         //
-        // Berekenen het totaal aantal punten van Aanvaller
+        // Calculate the total points of Attacker
         //
         $start = ($att_tribe-1)*10+1;
         $end = ($att_tribe*10);
 		
 		$abcount = 1;
 		
-		if($type == 1)
+		if($type == 1)//scout
 		{
 			for($i=$start;$i<=$end;$i++) {
 				global ${'u'.$i};
@@ -216,8 +222,9 @@ class Battle {
 		else
 		{
 			for($i=$start;$i<=$end;$i++) {
-				global ${'u'.$i};
+				global ${'u'.$i}; // defined in GameEngine/Data/unitdata.php
 
+				// blacksmith unit level, 0.7% per level
 				if($abcount <= 8 && $att_ab['a'.$abcount] > 0) {
 					if(in_array($i,$calvary)) {
 						$cap += (${'u'.$i}['atk'] + (${'u'.$i}['atk'] + 300 * ${'u'.$i}['pop'] / 7) * (pow(1.007, $att_ab['a'.$abcount]) - 1)) * $Attacker['u'.$i];
@@ -237,11 +244,11 @@ class Battle {
 
 				
 				$abcount +=1;
-				// Punten van de catavult van de aanvaller
+				// catapult attack
 				if(in_array($i,$catapult)) {
 					$catp += $Attacker['u'.$i];
 				}
-				 // Punten van de Rammen van de aanvaller
+				 // ram
                 if(in_array($i,$rams)) 
                 {
                     $ram += $Attacker['u'.$i];
@@ -250,7 +257,7 @@ class Battle {
                 $units['Att_unit'][$i] = $Attacker['u'.$i];
             }
             
-            if ($Attacker['uhero'] != 0)
+            if ($Attacker['uhero'] != 0)//automation only
             {
                 $units['Att_unit']['hero'] = $Attacker['uhero'];
                 $cap += $Attacker['uhero']*$atkhero['atk'];
@@ -262,7 +269,7 @@ class Battle {
         }
 		
 		//
-		// Berekent het totaal aantal punten van de Defender
+		// Calculates the total points of the Defender
 		//
         $start = ($def_tribe-1)*10+1;
         $end = ($def_tribe*10);
@@ -306,43 +313,43 @@ class Battle {
 		}
 		
 		//
-		// Formule voor de berekening van de bonus verdedigingsmuur "en" Residence ";
+		// Formula for calculating the bonus defense wall "and" Residence "
 		//		
 		if($def_wall > 0) {
-			// Stel de factor berekening voor de "Muur" als het type van de beschaving
-			// Factor = 1030 Romeinse muur
+			// Set the factor for calculating the "Wall" as the type of civilization
+			// Factor = 1030 Roman wall
 			// Factor = 1020 Wall Germanen
 			// Factor = 1025 Wall Galliers						
 			$factor = ($def_tribe == 1)? 1.030 : (($def_tribe == 2)? 1.020 : 1.025);
-			// Defense Infanterie = infanterie * Muur (%)
+			// Defense Infantry = Infantry * Wall (%)
 			$dp *= pow($factor,$def_wall);
-			// Defensa Cavelerie = Cavelerie * Muur (%)
+			// Defense Cavalry = Cavalry * Wall (%)
 			$cdp *= pow($factor,$def_wall);
 			
-			// Berekening van de Basic defence bonus "Residence" 
+			// Calculation of the Basic defense bonus "Residence" 
 			$dp += ((2*(pow($residence,2)))*(pow($factor,$def_wall)));
 			$cdp += ((2*(pow($residence,2)))*(pow($factor,$def_wall)));
 		}
 		else 
         {
-			// Berekening van de Basic defence bonus "Residence" 			
+			// Calculation of the Basic defense bonus "Residence" 			
 			$dp += (2*(pow($residence,2)));
 			$cdp += (2*(pow($residence,2)));
 		}
 		
 		//
-		// Formule voor het berekenen van punten aanvallers (Infanterie & Cavalry)
+		// Formula for calculating point defense (Infantry & Cavalry)
 		//
 			$rap = $ap+$cap;
 		//
-		// Formule voor de berekening van Defensive Punten
+		// Formula for calculating Defensive Points
 		//
 			 if ($rap==0) 
                  $rdp = ($dp) + ($cdp) + 10;
             else             
                  $rdp = ($dp * ($ap/$rap)) + ($cdp * ($cap/$rap)) + 10;
 		//
-		// En de Winnaar is....:
+		// And the Winner is ....:
 		//
 		$result['Attack_points'] = $rap;
 		$result['Defend_points'] = $rdp;
@@ -351,7 +358,7 @@ class Battle {
 
 		$result['Winner'] = ($winner)? "attacker" : "defender";
 		
-		// Formule voor de berekening van de Moraal
+		// Formula for calculating the Moral
 		if($attpop > $defpop) {
 			if ($rap < $rdp) {
 				$moralbonus = min(1.5, pow($attpop / $defpop, (0.2*($rap/$rdp))));
@@ -370,9 +377,8 @@ class Battle {
 		else {
 			$Mfactor = 1.5;
 		}
-		// Formule voor het berekenen verloren drives
-		// $type = 1 Raid, 0 Normal
-		if($type == 1)
+		// Formula for calculating lost units
+		if($type == 1) // scout
 		{
 			$holder = pow((($rdp*$moralbonus)/$rap),$Mfactor);
 			$holder = $holder / (1 + $holder);
@@ -386,7 +392,7 @@ class Battle {
 		{
 			
 		}
-		else if($type == 4) {
+		else if($type == 4) { // raid
 			$holder = ($winner) ? pow((($rdp*$moralbonus)/$rap),$Mfactor) : pow(($rap/($rdp*$moralbonus)),$Mfactor);
 			$holder = $holder / (1 + $holder);
 			// Attacker
@@ -396,7 +402,7 @@ class Battle {
 			$ram -= round($ram*$result[1]/100);
             $catp -= round($catp*$result[1]/100);  
 		}
-		else if($type == 3) 
+		else if($type == 3) // normal attack
         {
 			// Attacker
 			$result[1] = ($winner)? pow((($rdp*$moralbonus)/$rap),$Mfactor) : 1;
@@ -405,8 +411,8 @@ class Battle {
 			// Defender
 			$result[2] = (!$winner)?  pow(($rap/($rdp*$moralbonus)),$Mfactor) : 1;
 			$result[2] = round($result[2],8);
-			// Als aangevallen met "Hero"
-			$ku = ($att_tribe-1)*10+9;
+			// If attacked by a Hero
+			$ku = ($att_tribe-1)*10+9;// seem wrong, it's not the hero!!
             $kings = $Attacker['u'.$ku];    
             
             $aviables= $kings-round($kings*$result[1]);
@@ -428,22 +434,22 @@ class Battle {
 				$fealthy = 100;
 				break;														
 				}
-				$result['hero_fealthy'] = $fealthy;
+				$result['hero_fealthy'] = $fealthy; // not used
 			}
 			$ram -= ($winner)? round($ram*$result[1]/100) : round($ram*$result[2]/100);
             $catp -= ($winner)? round($catp*$result[1]/100) : round($catp*$result[2]/100);
         
 		}
-		// Formule voor de berekening van katapulten nodig
+		// Formula for the calculation of catapults needed
 		 if($catp > 0 && $tblevel != 0) {
             $wctp = pow(($rap/$rdp),1.5);
             $wctp = ($wctp >= 1)? 1-0.5/$wctp : 0.5*$wctp;
             $wctp *= $catp;
 
             $need = round((($moralbonus * (pow($tblevel,2) + $tblevel + 1)) / (8 * (round(200 * pow(1.0205,$att_ab['a8']))/200) / (1 * $bid34[$stonemason]['attri']/100))) + 0.5);
-            // Aantal katapulten om het gebouw neer te halen
+            // Number of catapults to take down the building
             $result[3] = $need;
-            // Aantal Katapulten die handeling
+            // Number of catapults that act
             $result[4] = $wctp;
             $result[5] = $moralbonus;
             $result[6] = $att_ab['a8'];
@@ -454,10 +460,10 @@ class Battle {
             $wctp *= $ram;
 
             $need = round((($moralbonus * (pow($walllevel,2) + $walllevel + 1)) / (8 * (round(200 * pow(1.0205,$att_ab['a7']))/200) / (1 * $bid34[$stonemason]['attri']/100))) + 0.5);
-            // Aantal katapulten om het gebouw neer te halen
+            // Number of rams to take down the building
             $result[7] = $need;
             
-            // Aantal Katapulten die handeling
+            // Number of rams that act
             $result[8] = $wctp;
         }
 		
@@ -480,7 +486,7 @@ class Battle {
         //$result['casualties_attacker']['11'] = 0;
         //exit($result['casualties_attacker']['2']);
         //$_hero=11;
-        if ($units['Att_unit']['hero']>0)
+        if ($units['Att_unit']['hero']>0)//automation only
         {
             $_result=mysql_query("select `owner` from " . TB_PREFIX . "vdata where `wref`='".$Attacker['from']."'");
             $fdb = mysql_fetch_array($_result);
