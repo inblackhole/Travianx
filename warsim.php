@@ -58,8 +58,8 @@ $battle->procSim($_POST);
 <?php include("Templates/menu.tpl"); ?>
 <div id="content"  class="warsim">
 <h1>Combat simulator</h1>
-<!--<form action="warsim.php" method="post">
-<?php /*
+<form action="warsim.php" method="post">
+<?php
 if(isset($_POST['result'])) {
 	$target = isset($_POST['target'])? $_POST['target'] : array();
 	$tribe = isset($_POST['mytribe'])? $_POST['mytribe'] : $session->tribe;
@@ -102,7 +102,7 @@ if(count($target) > 0) {
 	}
 	include("Templates/Simulator/def_end.tpl");
 	echo "<div class=\"clear\"></div>";
-}*/
+}
 ?>
 <table id="select" cellpadding="1" cellspacing="1">
 <thead><tr>
@@ -131,8 +131,8 @@ if(count($target) > 0) {
 </table>
 
 <p class="btn"><input type="image" value="ok" name="s1" id="btn_ok" class="dynamic_img" src="img/x.gif" alt="OK" /></p>
-</form>-->
-This is not working. We keep you up to date!
+</form>
+<!-- This is not working. We keep you up to date! -->
 </div>
 <div id="side_info">
 <?php
