@@ -567,7 +567,7 @@ class Automation {
                                 }
                             }
                                     //get attack units            
-                                            $Attacker = array();
+                                            //$Attacker = array();
                                             $start = ($owntribe-1)*10+1;
                                             $end = ($owntribe*10);
                                             $u = (($owntribe-1)*10);                                                            
@@ -758,7 +758,7 @@ class Automation {
                                 }
                             }
                                     //get attack units            
-                                            $Attacker = array();
+                                            //$Attacker = array();
                                             $start = ($owntribe-1)*10+1;
                                             $end = ($owntribe*10);
                                             $u = (($owntribe-1)*10);                                                            

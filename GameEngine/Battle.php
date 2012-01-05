@@ -482,10 +482,11 @@ class Battle {
         //$_hero=11;
         if ($units['Att_unit']['hero']>0)
         {
-            $_result=mysql_query("select `owner` from " . TB_PREFIX . "vdata where `wref`='".$Attacker['from']."'");
-            $fdb = mysql_fetch_array($_result);
-            $hero_owner=$fdb['owner'];
-            
+//        	$_result=mysql_query("select `owner` from " . TB_PREFIX . "vdata where `wref`='".$Attacker['from']."'");
+//        	$fdb = mysql_fetch_array($_result);
+//        	$hero_owner=$fdb['owner'];
+        	$hero_owner=$Attacker['id'];
+        	
             $_result=mysql_query("select * from " . TB_PREFIX . "hero where `dead`='0' and `uid`='".$hero_owner."'");
             $fdb = mysql_fetch_array($_result);
             $hero_id=$fdb['heroid'];
