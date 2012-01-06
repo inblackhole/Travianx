@@ -412,8 +412,8 @@ class Battle {
 		else if($type == 3) // normal attack
         {
 			// Attacker
-			$result[1] = ($winner)? pow((($rdp*$moralbonus)/$rap),$Mfactor) : 1; // maybe > 1 ?
-			$result[1] = round($result[1],8);
+			$result[1] = ($winner)? pow((($rdp*$moralbonus)/$rap),$Mfactor) : 1; 
+			$result[1] = min(1, round($result[1],8));
             
 			// Defender
 			$result[2] = (!$winner)?  pow(($rap/($rdp*$moralbonus)),$Mfactor) : 1;
